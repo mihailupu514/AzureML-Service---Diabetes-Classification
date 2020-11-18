@@ -22,15 +22,15 @@ experiment_name = 'diabetes_pipeline'
 experiment_folder = './' + experiment_name
 os.makedirs(experiment_folder, exist_ok=True)
 
-#Fetch GPU cluster for computations
-gpu_cluster = ComputeTarget(workspace=ws, name='demo-GPU-cluster')
+#Fetch CPU cluster for computations
+cpu_cluster = ComputeTarget(workspace=ws, name='cpu-compute')
 
 #Create python environment
 # Create a new runconfig object
 pipeline_run_config = RunConfiguration()
 
 # Use the compute you created above. 
-pipeline_run_config.target = gpu_cluster
+pipeline_run_config.target = cpu_cluster
 
 # Enable Docker
 pipeline_run_config.environment.docker.enabled = True
@@ -51,7 +51,7 @@ diabetes_ds = ws.datasets.get("diabetes_dataset")
 model_folder = PipelineData("model_folder", datastore=ws.get_default_datastore())
 
 estimator = Estimator(source_directory=experiment_folder,
-                        compute_target = gpu_cluster,
+                        compute_target = cpu_cluster,
                         environment_definition=pipeline_run_config.environment,
                         entry_script='train_diabetes.py')
 
@@ -62,7 +62,7 @@ train_step = EstimatorStep(name = "Train Model",
                                                              '--output_folder', model_folder],
                            inputs=[diabetes_ds.as_named_input('diabetes')],
                            outputs=[model_folder],
-                           compute_target = gpu_cluster,
+                           compute_target = cpu_cluster,
                            allow_reuse = False)
 
 # Step 2, run the model registration script
@@ -71,7 +71,7 @@ register_step = PythonScriptStep(name = "Register Model",
                                 script_name = "register_diabetes.py",
                                 arguments = ['--model_folder', model_folder],
                                 inputs=[model_folder],
-                                compute_target = gpu_cluster,
+                                compute_target = cpu_cluster,
                                 runconfig = pipeline_run_config,
                                 allow_reuse = False)
 

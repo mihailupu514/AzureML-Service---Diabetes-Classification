@@ -11,7 +11,7 @@ for webservice_name in ws.webservices:
     webservice = ws.webservices[webservice_name]
     print(webservice.name)
 
-service = ws.webservices['diabetes-service']
+service = ws.webservices['diabetes-service-v2']
 
 x_new = [[2,180,74,24,21,23.9091702,1.488172308,22]]
 print ('Patient: {}'.format(x_new[0]))

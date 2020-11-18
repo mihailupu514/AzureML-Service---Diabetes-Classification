@@ -24,7 +24,7 @@ os.makedirs(experiment_folder, exist_ok=True)
 print("Experiment:", experiment.name)
 
 #Fetch GPU cluster for computations
-gpu_cluster = ComputeTarget(workspace=ws, name='demo-GPU-cluster')
+cpu_cluster = ComputeTarget(workspace=ws, name='cpu-compute')
 
 # Sample a range of parameter values
 params = GridParameterSampling(
@@ -43,7 +43,7 @@ diabetes_ds = ws.datasets.get("diabetes_dataset")
 # Create an estimator that uses the remote compute
 hyper_estimator = SKLearn(source_directory=experiment_folder,
                            inputs=[diabetes_ds.as_named_input('diabetes')], # Pass the dataset as an input
-                           compute_target = gpu_cluster,
+                           compute_target = cpu_cluster,
                            conda_packages=['pandas','ipykernel','matplotlib'],
                            pip_packages=['azureml-sdk','argparse','pyarrow'],
                            entry_script='diabetes_training.py')

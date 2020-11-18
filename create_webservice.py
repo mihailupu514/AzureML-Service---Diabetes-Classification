@@ -1,13 +1,17 @@
+import os
 import azureml.core
-print("Ready to use Azure ML", azureml.core.VERSION)
-
 from azureml.core import Workspace
+from azureml.core import Model
+from azureml.core.webservice import AciWebservice
+from azureml.core.model import InferenceConfig
+from azureml.core.conda_dependencies import CondaDependencies 
+
+
+print("Ready to use Azure ML", azureml.core.VERSION)
 
 # Load the workspace from the saved config file
 ws = Workspace.from_config()
 print('Ready to work with', ws.name)
-
-from azureml.core import Model
 
 for model in Model.list(ws):
     print(model.name, 'version:', model.version)
@@ -24,7 +28,6 @@ model = ws.models['diabetes']
 print(model.name, 'version', model.version)
 
 #Create service folder
-import os
 folder_name = 'diabetes_service'
 # Create a folder for the web service files
 experiment_folder = './' + folder_name
@@ -32,7 +35,6 @@ os.makedirs(folder_name, exist_ok=True)
 print(folder_name, 'folder created.')
 
 #Create a container config yml file
-from azureml.core.conda_dependencies import CondaDependencies 
 
 # Add the dependencies for our model (AzureML defaults is already included)
 myenv = CondaDependencies()
@@ -49,10 +51,7 @@ print("Saved dependency info in", env_file)
 with open(env_file,"r") as f:
     print(f.read())
 
-
 #Deploy web service
-from azureml.core.webservice import AciWebservice
-from azureml.core.model import InferenceConfig
 
 # Configure the scoring environment
 inference_config = InferenceConfig(runtime= "python",
@@ -62,7 +61,7 @@ inference_config = InferenceConfig(runtime= "python",
 
 deployment_config = AciWebservice.deploy_configuration(cpu_cores = 1, memory_gb = 1)
 
-service_name = "diabetes-service"
+service_name = "diabetes-service-v2"
 
 service = Model.deploy(ws, service_name, [model], inference_config, deployment_config)
 
