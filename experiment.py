@@ -23,7 +23,7 @@ os.makedirs(experiment_folder, exist_ok=True)
 
 print("Experiment:", experiment.name)
 
-#Fetch GPU cluster for computations
+#Fetch CPU cluster for computations
 cpu_cluster = ComputeTarget(workspace=ws, name='cpu-compute')
 
 # Sample a range of parameter values
