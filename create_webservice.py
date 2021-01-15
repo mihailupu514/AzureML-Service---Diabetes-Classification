@@ -67,5 +67,3 @@ service = Model.deploy(ws, service_name, [model], inference_config, deployment_c
 
 service.wait_for_deployment(True)
 print(service.state)
-
-
